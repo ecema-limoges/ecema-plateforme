@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ECEMA Limoges — L'IA au service des RH</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%234BBFBF'/><text y='0.9em' x='50%' text-anchor='middle' font-size='55' font-family='Arial' font-weight='bold' fill='white'>E</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+
+// ═══════════════════════════════════════
+// SUPABASE
+// ═══════════════════════════════════════
+const SUPABASE_URL = 'https://vgbrnsqhhfnxspbaxhdp.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZnYnJuc3FoaGZueHNwYmF4aGRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MzIyNTYsImV4cCI6MjA5MDAwODI1Nn0.zSYjcau0HxyAbY-wAcyLfa5-oBrDSBGrnGhpU3x-Das';
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+const ADMIN_EMAIL = 'direction@ecema.fr';
+const ADMIN_PASSWORD = 'ecema-admin2024';
+
+// ═══════════════════════════════════════
+// COURSE DATA
+// ═══════════════════════════════════════
+const MODULES = [
+  {
+    num: 1,
+    titre: "Introduction à l'IA & tendances RH",
+    description: "Comprendre les fondamentaux de l'IA, le Machine Learning, le NLP et les grandes tendances qui transforment la fonction RH.",
+    ressources: {
+      videos: [
+        { nom: "L'IA transforme les RH — Webinar Replay", url: "https://youtu.be/_Vtg8AbOMhc", duree: "~45 min", desc: "Replay complet du webinar sur la transformation de la fonction RH par l'IA" },
+        { nom: "La révolution silencieuse de l'IA sur le métier du DRH", url: "https://youtu.be/vmA8D0eVf6g", duree: "~20 min", desc: "Comment l'IA redéfinit en profondeur le rôle et les missions du DRH" },
+      ],
+      articles: [
+        { nom: "Comment l'IA transforme le futur des RH", url: "https://www.parlonsrh.com/media/comment-lia-transforme-le-futur-de-la-fonction-rh-et-des-entreprises/", desc: "Parlons RH — Analyse approfondie de la transformation de la fonction RH" },
+        { nom: "IA et RH : impacts sur la gestion des compétences", url: "https://culture-rh.com/ia-rh-impacts-gestion-competences/", desc: "Culture RH — GEPP, people analytics et compétences à l'ère de l'IA" },
+      ]
+    },
+    quiz: [
+      { q: "Une DRH déploie un outil de People Analytics pour anticiper les départs. L'algorithme identifie que les collaborateurs ayant refusé une promotion sont 3x plus susceptibles de partir. Quel est le principal risque éthique ?", opts: ["L'outil est trop coûteux à maintenir", "L'algorithme peut encourager des actions préventives discriminatoires basées sur des comportements personnels légitimes", "Les données RH ne sont pas assez nombreuses pour être fiables", "Le modèle prédictif sera rapidement obsolète"], correct: 1, explanation: "Utiliser des comportements passés légitimes pour prédire et potentiellement sanctionner un collaborateur soulève des enjeux éthiques majeurs de discrimination et de surveillance." },
+      { q: "Parmi ces affirmations sur le Machine Learning en RH, laquelle est EXACTE ?", opts: ["Le ML reproduit exactement les règles définies par le programmeur", "Le ML apprend à partir des données et peut identifier des patterns que le programmeur n'avait pas anticipés", "Le ML nécessite obligatoirement des données structurées de type tableur", "Le ML et l'IA générative désignent la même technologie"], correct: 1, explanation: "Le Machine Learning apprend de manière autonome. Cette capacité à identifier des patterns non anticipés le rend puissant — et potentiellement risqué si les données sont biaisées." },
+      { q: "Selon McKinsey (2024), quelle proportion des tâches administratives RH est potentiellement automatisable ?", opts: ["Environ 15%", "Environ 28%", "Environ 42%", "Environ 67%"], correct: 2, explanation: "McKinsey (2024) estime qu'environ 42% des tâches administratives RH sont automatisables, impliquant une transformation profonde du métier RH." },
+      { q: "Le NLP (Natural Language Processing) est utilisé en RH principalement pour :", opts: ["Analyser les données de paie et détecter les anomalies", "Comprendre et générer du langage humain — fiches de poste, synthèses, chatbots candidats", "Créer des visualisations de données RH interactives", "Automatiser les calculs de congés et absences"], correct: 1, explanation: "Le NLP permet à l'IA de comprendre et générer du langage humain. En RH il sert à rédiger des fiches de poste inclusives, synthétiser des entretiens, alimenter des chatbots." },
+      { type: 'open', q: "Un cabinet RH envisage de déployer un outil de People Analytics pour prédire le turnover. Quelles sont selon vous les 2 conditions indispensables à réunir avant ce déploiement, et pourquoi ?", timer: 90, elements_cles: "qualité des données, conformité RGPD, PIA analyse d'impact, consentement collaborateurs, transparence, supervision humaine, biais potentiels, gouvernance des données, formation des RH" },
+    ]
+  },
+  {
+    num: 2,
+
+    titre: "IA et recrutement, IA et GEPP",
+    description: "Découvrir comment l'IA révolutionne le recrutement de bout en bout, et comment la GEPP bénéficie des capacités prédictives de l'IA.",
+    ressources: {
+      videos: [
+        { nom: "5 automatisations IA à implémenter dans toutes les entreprises", url: "https://youtu.be/unA3slO6aSY", duree: "~15 min", desc: "Cas pratiques d'automatisation IA applicables directement en entreprise" },
+        { nom: "GEPP et compétences : les nouveaux outils digitaux", url: "https://www.youtube.com/watch?v=FE3Xgq7OeFM", duree: "20 min", desc: "Comment digitaliser sa gestion des compétences" },
+      ],
+      articles: [
+        { nom: "Recrutement et Intelligence Artificielle", url: "https://www.grantthornton.fr/fr/insights/articles-et-publications/2025/recrutement-et-intelligence-artificielle/", desc: "Grant Thornton — RGPD, biais, AI Act et conformité dans le recrutement par IA" },
+        { nom: "Cas client SNCF — 365Talents", url: "https://365talents.com/fr/ressources/ebooks/cas-client-sncf/", desc: "365Talents — Retour d'expérience réel : 96% d'adoption, +35% mobilité interne" },
+      ],
+    },
+    quiz: [
+      { q: "L'Oréal a déployé le chatbot Mya pour la présélection. Quel résultat lui est principalement attribué ?", opts: ["Suppression de 40% des postes de recruteurs", "80% de gain de temps sur la présélection avec 92% de satisfaction candidats", "Réduction de 100% des biais de recrutement", "Doublement du nombre de candidatures reçues"], correct: 1, explanation: "Le chatbot Mya a permis 80% de gain de temps sur la présélection avec 92% de satisfaction candidats. Les recruteurs ont pu se concentrer sur les entretiens à forte valeur ajoutée." },
+      { q: "La cause profonde de l'abandon par Amazon de son outil IA de tri CV en 2018 était :", opts: ["Un coût de maintenance trop élevé", "L'algorithme avait appris sur des données historiques biaisées reflétant 10 ans de recrutements masculins", "Les recruteurs refusaient d'utiliser l'outil", "L'outil était trop lent pour traiter le volume de candidatures"], correct: 1, explanation: "L'algorithme avait été entraîné sur 10 ans de recrutements historiquement masculins. Il avait appris à pénaliser les CV contenant des mots 'féminins', reproduisant un biais structurel." },
+      { type: 'open', q: "Quels sont les 2 principaux risques d'un recrutement entièrement délégué à l'IA, sans supervision humaine ? Appuyez-vous sur des exemples du cours.", timer: 90, elements_cles: "biais algorithmiques, Amazon, discrimination, opacité décisions, droit à l'explication RGPD art 22, sur-optimisation profil type, manque diversité, déshumanisation expérience candidat" },
+      { q: "Dans une GEPP enrichie par l'IA, l'apport principal de l'algorithme est de :", opts: ["Remplacer les entretiens de carrière annuels", "Identifier en temps réel les écarts de compétences et recommander des parcours personnalisés", "Décider automatiquement des promotions et augmentations", "Évaluer la performance individuelle sans intervention managériale"], correct: 1, explanation: "L'IA dans la GEPP permet une cartographie dynamique et des recommandations personnalisées. Elle aide à la décision mais ne remplace pas le dialogue manager-collaborateur." },
+      { q: "Le RGPD impose, concernant les décisions RH automatisées significatives, que :", opts: ["Toute décision IA est autorisée si elle est documentée", "Toute décision significative fondée exclusivement sur traitement automatisé doit pouvoir être expliquée et contestée", "Les décisions IA en recrutement sont exemptées si elles réduisent les biais", "L'entreprise doit obtenir l'accord de la CNIL avant tout projet IA RH"], correct: 1, explanation: "L'article 22 du RGPD garantit le droit à l'explication et d'opposition pour toute décision automatisée significative. La personne peut exiger une révision humaine." },
+    ]
+  },
+  {
+    num: 3,
+
+    titre: "Éthique, biais algorithmiques et RGPD",
+    description: "Comprendre les biais algorithmiques, maîtriser le cadre juridique RGPD et AI Act, et adopter une posture éthique face aux outils d'IA RH.",
+    ressources: {
+      videos: [
+        { nom: "CNIL : Droits et devoirs des IA génératives (#172)", url: "https://youtu.be/xNqZySmkHKY", duree: "~30 min", desc: "La CNIL explique le cadre juridique des IA génératives et les droits des utilisateurs" },
+        { nom: "IA & biais cognitifs dans le recrutement", url: "https://youtu.be/oq6FD5-9Mw8", duree: "~20 min", desc: "Analyse des biais algorithmiques et cognitifs qui impactent le recrutement par IA" },
+      ],
+      articles: [
+        { nom: "10 biais algorithmiques à éviter en recrutement", url: "https://www.flatchr.io/blog/biais-algorithmiques-ia-recrutement", desc: "Flatchr — Guide complet des biais et comment les prévenir" },
+        { nom: "IA et RGPD : ce que les RH doivent savoir", url: "https://www.flatchr.io/blog/ia-rgpd-rh-recruter-conformite", desc: "Flatchr — Obligations RGPD et AI Act pour recruter en conformité" },
+      ],
+    },
+    quiz: [
+      { q: "Une entreprise utilise un algorithme favorisant les candidats des grandes écoles. Ce biais est principalement de type :", opts: ["Biais de confirmation cognitif", "Biais de sélection historique — l'algorithme reproduit les recrutements passés biaisés", "Biais de mesure lié à la qualité des données brutes", "Biais d'automatisation dû à un bug informatique"], correct: 1, explanation: "Quand l'algorithme est entraîné sur les recrutements historiques, il reproduit les critères implicites passés, y compris les biais liés au prestige des écoles ou aux profils 'traditionnellement recrutés'." },
+      { q: "L'AI Act 2024 classe les systèmes IA RH (recrutement, évaluation) en catégorie :", opts: ["Risque minimal — aucune obligation spécifique", "Risque limité — obligation d'information uniquement", "Haut risque — documentation, supervision humaine et audit obligatoires", "Risque inacceptable — interdits sur le territoire européen"], correct: 2, explanation: "L'AI Act classe les IA RH en 'haut risque' car elles impactent directement la carrière des personnes. Cela impose documentation technique, évaluation de conformité et supervision humaine." },
+      { type: 'open', q: "Qu'est-ce qu'un biais algorithmique ? En vous appuyant sur un exemple précis du cours, expliquez comment il se forme et comment une entreprise peut le prévenir.", timer: 90, elements_cles: "erreur systématique, données d'entraînement biaisées, biais historique, Amazon 2018, femmes pénalisées, audit indépendant, données représentatives, supervision humaine, équité algorithmique" },
+      { q: "Un candidat rejeté automatiquement par un ATS IA peut exercer, selon le RGPD :", opts: ["Aucun droit — la décision algorithmique est définitive", "Uniquement le droit de demander une explication écrite dans 30 jours", "Le droit à l'explication, d'opposition, et à une révision humaine de la décision (art. 22)", "Le droit de porter plainte uniquement auprès de la CNIL"], correct: 2, explanation: "L'article 22 du RGPD garantit le droit d'obtenir une explication, de contester et d'exiger une révision humaine pour toute décision automatisée produisant des effets significatifs." },
+      { q: "Quelle pratique illustre le mieux la 'supervision humaine' exigée par l'AI Act dans un processus de recrutement IA ?", opts: ["Vérifier chaque semaine que les serveurs fonctionnent correctement", "Pouvoir comprendre les critères de scoring, détecter des anomalies et prendre la décision finale indépendamment de l'IA", "Demander à l'éditeur un rapport mensuel sur les performances de l'algorithme", "Former tous les managers à l'utilisation de l'outil"], correct: 1, explanation: "La supervision humaine signifie que le RRH peut comprendre, questionner et corriger la recommandation IA, et prendre une décision autonome fondée sur son propre jugement professionnel." },
+    ]
+  },
+  {
+    num: 4,
+
+    titre: "Panorama d'outils RH intégrant l'IA",
+    description: "Découvrir les principales solutions IA RH du marché, savoir comment les choisir et les déployer, et maîtriser les usages de l'IA générative en RH.",
+    ressources: {
+      videos: [
+        { nom: "L'IA en recrutement en 2026", url: "https://youtu.be/H8nLVPcYBTU", duree: "~25 min", desc: "État de l'art et perspectives de l'IA dans le recrutement pour 2026" },
+        { nom: "Business Intelligence et IA pour les RH", url: "https://youtu.be/bAa438UYmn0", duree: "~20 min", desc: "Comment combiner BI et IA pour optimiser les décisions RH" },
+      ],
+      articles: [
+        { nom: "Automatisation des processus RH : outils et cas d'usage", url: "https://www.flatchr.io/blog/ia-automatisation-processus-rh-cas-usage", desc: "Flatchr — Panorama des automatisations IA dans les processus RH" },
+        { nom: "Top 3 des solutions IA pour les RH en 2024", url: "https://www.talentlens.com/fr/blog/solutions-ia-rh-2024.html", desc: "TalentLens — Les 3 solutions IA incontournables pour les professionnels RH" },
+      ],
+    },
+    quiz: [
+      { q: "Une PME veut déployer un outil IA pour le recrutement. Quelle est la première erreur à éviter ?", opts: ["Choisir un outil trop récent sans références clients", "Déployer sans avoir défini le problème précis à résoudre ni l'indicateur de succès mesurable", "Impliquer les managers dans le choix de l'outil", "Contacter la CNIL avant de commencer"], correct: 1, explanation: "9 projets IA sur 10 échouent faute d'avoir défini un problème précis et un indicateur mesurable. 'Améliorer le recrutement' est trop vague — 'Réduire le time-to-fill de 52 à 30 jours' est actionnable." },
+      { q: "La SNCF a déployé 365Talents pour 153 000 collaborateurs. Quel résultat illustre l'impact sur la mobilité interne ?", opts: ["Suppression de 20% des postes RH administratifs", "Augmentation de 35% des candidatures internes aux postes ouverts en 6 mois", "Réduction de 50% du budget formation annuel", "Automatisation complète des entretiens de carrière"], correct: 1, explanation: "En 6 mois, 365Talents a généré +35% de candidatures internes, prouvant que rendre visible les opportunités et les profils stimule la mobilité — sans remplacer le dialogue RH humain." },
+      { q: "Parmi ces usages de l'IA générative en RH, lequel présente le risque juridique le plus élevé ?", opts: ["Rédiger une première version de fiche de poste en écriture épicène", "Générer automatiquement des synthèses d'entretiens annuels versées aux dossiers collaborateurs", "Proposer des idées de questions pour un guide d'entretien", "Créer un brouillon de communication interne sur une nouvelle politique RH"], correct: 1, explanation: "Les synthèses d'entretiens sont des données RH sensibles. Leur génération automatique soulève des questions de consentement, fiabilité et RGPD — la décision d'évaluation doit rester humaine." },
+      { type: 'open', q: "Vous êtes RRH dans une ETI de 300 collaborateurs. La direction vous demande d'évaluer 2 solutions IA pour le recrutement. Quelles sont les 3 questions prioritaires à poser aux prestataires, et pourquoi ?", timer: 90, elements_cles: "conformité RGPD hébergement données, transparence algorithmique explicabilité, audit biais indépendant, supervision humaine intégrée, ROI mesurable références clients, formation accompagnement, coût TCO" },
+      { q: "Pourquoi la conduite du changement est-elle le principal facteur d'échec des projets IA RH ?", opts: ["Les outils IA sont techniquement trop complexes pour les équipes RH", "95% des projets échouent par manque d'adoption — l'outil le plus performant est inutile s'il n'est pas utilisé", "Les budgets formation sont insuffisants dans la plupart des entreprises", "Les syndicats s'opposent systématiquement aux projets IA"], correct: 1, explanation: "La technologie représente 20% du succès. Les 80% restants dépendent de l'adhésion des utilisateurs. Sans accompagnement, formation et communication, même le meilleur outil sera abandonné." },
+    ]
+  },
+];
+
+</script>
+<style>
+  :root {
+    --teal: #4BBFBF;
+    --teal-light: #E8F8F8;
+    --teal-dark: #339999;
+    --navy: #2C2C2C;
+    --cream: #f7f4ef;
+    --cream-dark: #ede9e1;
+    --text: #1a1a2e;
+    --text-muted: #6b7280;
+    --success: #2d8c6b;
+    --success-light: #d1fae5;
+    --danger: #c0392b;
+    --danger-light: #fee2e2;
+    --border: #ddd8ce;
+    --shadow: 0 4px 24px rgba(0,0,0,0.08);
+    --white: #ffffff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; }
+  h1, h2, h3, h4 { font-family: 'Syne', sans-serif; }
+  .screen { display: none; min-height: 100vh; }
+  .screen.active { display: flex; }
+
+  /* ═══ LOGIN ═══ */
+  #screen-login { flex-direction: row; }
+  .login-left { width: 45%; background: var(--navy); padding: 60px 56px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; }
+  .login-left::before { content: ''; position: absolute; top: -80px; right: -80px; width: 320px; height: 320px; border: 80px solid rgba(75,191,191,0.15); border-radius: 50%; }
+  .login-left::after { content: ''; position: absolute; bottom: -120px; left: -60px; width: 400px; height: 400px; border: 60px solid rgba(75,191,191,0.08); border-radius: 50%; }
+  .brand { position: relative; z-index: 2; }
+  .brand-name { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: white; }
+  .brand-name span { color: var(--teal); }
+  .brand-sub { font-size: 12px; color: rgba(255,255,255,0.5); letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; }
+  .login-hero { position: relative; z-index: 2; }
+  .login-hero h2 { font-size: 38px; font-weight: 800; color: white; line-height: 1.15; margin-bottom: 16px; }
+  .login-hero h2 em { font-style: normal; color: var(--teal); }
+  .login-hero p { color: rgba(255,255,255,0.6); font-size: 15px; line-height: 1.7; }
+  .login-stats { display: flex; gap: 32px; position: relative; z-index: 2; }
+  .stat-val { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 700; color: var(--teal); }
+  .stat-label { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+  .login-right { flex: 1; display: flex; align-items: center; justify-content: center; padding: 60px; }
+  .login-form-wrap { width: 100%; max-width: 400px; }
+  .login-form-wrap h3 { font-size: 26px; font-weight: 700; margin-bottom: 8px; color: var(--navy); }
+  .login-form-wrap p { color: var(--text-muted); font-size: 14px; margin-bottom: 36px; }
+  .role-tabs { display: flex; background: var(--cream-dark); border-radius: 10px; padding: 4px; margin-bottom: 28px; }
+  .role-tab { flex: 1; padding: 10px; text-align: center; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; border: none; background: none; cursor: pointer; border-radius: 7px; color: var(--text-muted); transition: all 0.2s; }
+  .role-tab.active { background: white; color: var(--navy); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .form-group { margin-bottom: 20px; }
+  .form-group label { display: block; font-size: 12px; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
+  .form-group input { width: 100%; padding: 13px 16px; border: 1.5px solid var(--border); border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 15px; background: white; color: var(--text); outline: none; transition: border-color 0.2s; }
+  .form-group input:focus { border-color: var(--teal); }
+  .btn-primary { width: 100%; padding: 14px; background: var(--teal); color: white; border: none; border-radius: 10px; font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; transition: background 0.2s, transform 0.1s; }
+  .btn-primary:hover { background: var(--teal-dark); transform: translateY(-1px); }
+  .error-msg { margin-top: 14px; padding: 12px 16px; background: var(--danger-light); border-radius: 8px; font-size: 13px; color: var(--danger); display: none; }
+
+  /* ═══ STUDENT ═══ */
+  #screen-student { flex-direction: column; }
+  .top-nav { background: var(--navy); padding: 0 40px; height: 64px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  .nav-brand { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; color: white; }
+  .nav-brand span { color: var(--teal); }
+  .nav-right { display: flex; align-items: center; gap: 20px; }
+  .nav-user { display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,0.85); font-size: 14px; }
+  .avatar { width: 34px; height: 34px; background: var(--teal); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: white; }
+  .btn-logout { padding: 8px 16px; border: 1.5px solid rgba(255,255,255,0.25); border-radius: 8px; background: none; color: rgba(255,255,255,0.7); font-size: 13px; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
+  .btn-logout:hover { border-color: rgba(255,255,255,0.6); color: white; }
+
+  .student-layout { display: flex; flex: 1; max-width: 1200px; margin: 0 auto; width: 100%; padding: 40px; gap: 32px; }
+
+  /* SIDEBAR */
+  .sidebar { width: 260px; flex-shrink: 0; }
+  .sidebar-card { background: white; border-radius: 16px; padding: 24px; box-shadow: var(--shadow); margin-bottom: 16px; }
+  .progress-title { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 16px; }
+  .progress-bar-wrap { background: var(--cream-dark); border-radius: 999px; height: 8px; margin-bottom: 8px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--teal), var(--teal-dark)); border-radius: 999px; transition: width 0.6s ease; }
+  .progress-pct { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: var(--navy); }
+  .progress-label { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .module-list { list-style: none; }
+  .module-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--cream-dark); cursor: pointer; transition: opacity 0.2s; }
+  .module-item:last-child { border-bottom: none; }
+  .module-item.locked { opacity: 0.45; cursor: not-allowed; }
+  .module-item.active .module-item-title { color: var(--navy); font-weight: 600; }
+  .module-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+  .module-icon.done { background: var(--success-light); }
+  .module-icon.active-icon { background: var(--teal-light); }
+  .module-icon.locked-icon { background: var(--cream-dark); }
+  .module-item-title { font-size: 13px; color: var(--text-muted); line-height: 1.4; }
+
+  /* MAIN */
+  .main-content { flex: 1; }
+  .content-header { margin-bottom: 28px; }
+  .breadcrumb { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+  .content-header h1 { font-size: 28px; font-weight: 800; color: var(--navy); margin-bottom: 8px; }
+  .content-header p { color: var(--text-muted); font-size: 15px; }
+
+  /* TIMER */
+  .session-timer { background: var(--navy); border-radius: 14px; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .timer-left { display: flex; align-items: center; gap: 12px; }
+  .timer-dot { width: 10px; height: 10px; background: #4ade80; border-radius: 50%; animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } }
+  .timer-label { font-size: 13px; color: rgba(255,255,255,0.6); }
+  .timer-val { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700; color: white; }
+  .timer-info { font-size: 12px; color: rgba(255,255,255,0.45); text-align: right; }
+
+  /* RESOURCE TABS */
+  .resource-tabs { display: flex; gap: 4px; background: white; padding: 6px; border-radius: 12px; box-shadow: var(--shadow); margin-bottom: 24px; width: fit-content; }
+  .res-tab { padding: 9px 20px; border-radius: 8px; border: none; background: none; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text-muted); cursor: pointer; transition: all 0.2s; }
+  .res-tab.active { background: var(--teal); color: white; }
+  .resource-card { background: white; border-radius: 16px; padding: 32px; box-shadow: var(--shadow); margin-bottom: 24px; }
+  .resource-card h3 { font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .doc-list { list-style: none; }
+  .doc-item { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 10px; margin-bottom: 8px; background: var(--cream); cursor: pointer; transition: background 0.2s; text-decoration: none; }
+  .doc-item:hover { background: var(--cream-dark); }
+  .doc-icon { width: 38px; height: 38px; border-radius: 8px; background: var(--teal); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .doc-info { flex: 1; }
+  .doc-name { font-size: 14px; font-weight: 500; color: var(--text); }
+  .doc-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .doc-badge { padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; font-family: 'Syne', sans-serif; }
+  .doc-badge.yt { background: #fee2e2; color: #c0392b; }
+  .doc-badge.link { background: var(--teal-light); color: var(--teal-dark); }
+
+  /* QUIZ */
+  .quiz-section { display: none; }
+  .quiz-section.visible { display: block; }
+  .quiz-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .quiz-header h3 { font-size: 20px; font-weight: 700; color: var(--navy); }
+  .quiz-progress-text { font-size: 13px; color: var(--text-muted); }
+
+  /* COUNTDOWN TIMER */
+  .countdown-wrap { display: flex; align-items: center; gap: 12px; background: white; border-radius: 12px; padding: 12px 20px; box-shadow: var(--shadow); margin-bottom: 20px; }
+  .countdown-ring { position: relative; width: 52px; height: 52px; }
+  .countdown-ring svg { transform: rotate(-90deg); }
+  .countdown-ring circle { fill: none; stroke-width: 4; }
+  .countdown-ring .bg { stroke: var(--cream-dark); }
+  .countdown-ring .fg { stroke: var(--teal); stroke-dasharray: 138; stroke-dashoffset: 0; transition: stroke-dashoffset 1s linear, stroke 0.3s; stroke-linecap: round; }
+  .countdown-ring .fg.warning { stroke: #f59e0b; }
+  .countdown-ring .fg.danger { stroke: var(--danger); }
+  .countdown-num { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800; color: var(--navy); }
+  .countdown-text { font-size: 13px; color: var(--text-muted); }
+  .countdown-text strong { color: var(--navy); font-weight: 600; display: block; }
+
+  .question-card { background: white; border-radius: 16px; padding: 32px; box-shadow: var(--shadow); margin-bottom: 16px; animation: slideIn 0.3s ease; }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  .question-num { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--teal); font-family: 'Syne', sans-serif; margin-bottom: 12px; }
+  .question-text { font-size: 17px; font-weight: 500; color: var(--text); margin-bottom: 24px; line-height: 1.6; }
+  .options-list { list-style: none; }
+  .option { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border: 1.5px solid var(--border); border-radius: 10px; margin-bottom: 10px; cursor: pointer; transition: all 0.15s; user-select: none; }
+  .option:hover { border-color: var(--teal); background: var(--teal-light); }
+  .option.selected { border-color: var(--teal); background: var(--teal-light); }
+  .option.correct { border-color: var(--success); background: var(--success-light); }
+  .option.wrong { border-color: var(--danger); background: var(--danger-light); }
+  .option.disabled { pointer-events: none; opacity: 0.6; }
+  .option-letter { width: 28px; height: 28px; border-radius: 7px; background: var(--cream-dark); display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; color: var(--text-muted); flex-shrink: 0; transition: all 0.15s; }
+  .option.selected .option-letter { background: var(--teal); color: white; }
+  .option.correct .option-letter { background: var(--success); color: white; }
+  .option.wrong .option-letter { background: var(--danger); color: white; }
+  .option-text { font-size: 14px; color: var(--text); line-height: 1.4; }
+
+  .quiz-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 8px; }
+  .btn-secondary { padding: 12px 24px; border: 1.5px solid var(--border); border-radius: 10px; background: white; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 600; color: var(--text-muted); cursor: pointer; transition: all 0.2s; }
+  .btn-secondary:hover { border-color: var(--teal); color: var(--teal); }
+  .btn-validate { padding: 12px 28px; background: var(--teal); border: none; border-radius: 10px; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: white; cursor: pointer; transition: all 0.2s; }
+  .btn-validate:hover { background: var(--teal-dark); transform: translateY(-1px); }
+  .btn-validate:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  .result-banner { display: none; padding: 20px 24px; border-radius: 14px; margin-top: 16px; align-items: center; gap: 16px; }
+  .result-banner.success { display: flex; background: var(--success-light); border: 1.5px solid #a7f3d0; }
+  .result-banner.fail { display: flex; background: var(--danger-light); border: 1.5px solid #fca5a5; }
+  .result-banner.timeout { display: flex; background: #fff7ed; border: 1.5px solid #fed7aa; }
+  .result-icon { font-size: 28px; }
+  .result-text h4 { font-size: 16px; font-weight: 700; color: var(--text); }
+  .result-text p { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+  .btn-next { margin-left: auto; padding: 10px 22px; background: var(--navy); color: white; border: none; border-radius: 8px; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+  .btn-next:hover { background: #444; }
+
+  /* EDC */
+  .edc-card { background: white; border-radius: 16px; padding: 32px; box-shadow: var(--shadow); border-left: 6px solid var(--teal); }
+  .edc-card h2 { font-size: 22px; font-weight: 800; color: var(--navy); margin-bottom: 8px; }
+  .edc-card p { color: var(--text-muted); font-size: 14px; margin-bottom: 20px; }
+  .edc-badge { display: inline-block; background: var(--teal-light); color: var(--teal-dark); padding: 6px 14px; border-radius: 999px; font-size: 12px; font-weight: 700; font-family: 'Syne', sans-serif; margin-bottom: 16px; }
+
+  /* ═══ ADMIN ═══ */
+  #screen-admin { flex-direction: column; }
+  .admin-layout { display: flex; flex-direction: column; max-width: 1200px; margin: 0 auto; width: 100%; padding: 40px; gap: 28px; }
+  .admin-header { display: flex; align-items: flex-end; justify-content: space-between; }
+  .admin-header h1 { font-size: 32px; font-weight: 800; color: var(--navy); }
+  .admin-header p { color: var(--text-muted); font-size: 14px; margin-top: 4px; }
+  .admin-date { font-size: 13px; color: var(--text-muted); background: white; padding: 8px 16px; border-radius: 8px; box-shadow: var(--shadow); }
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .kpi-card { background: white; border-radius: 14px; padding: 24px; box-shadow: var(--shadow); border-top: 4px solid var(--teal); }
+  .kpi-icon { font-size: 20px; margin-bottom: 12px; }
+  .kpi-val { font-family: 'Syne', sans-serif; font-size: 34px; font-weight: 800; color: var(--navy); line-height: 1; }
+  .kpi-label { font-size: 12px; color: var(--text-muted); margin-top: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .table-card { background: white; border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; }
+  .table-header { padding: 24px 28px; border-bottom: 1px solid var(--border); }
+  .table-header h3 { font-size: 17px; font-weight: 700; color: var(--navy); }
+  table { width: 100%; border-collapse: collapse; }
+  thead th { padding: 12px 16px; text-align: left; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); background: var(--cream); border-bottom: 1px solid var(--border); }
+  tbody tr { border-bottom: 1px solid var(--cream-dark); transition: background 0.15s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--cream); }
+  tbody td { padding: 16px; font-size: 14px; color: var(--text); vertical-align: middle; }
+  .student-cell { display: flex; align-items: center; gap: 10px; }
+  .avatar-sm { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; flex-shrink: 0; background: var(--teal-light); color: var(--teal-dark); }
+  .student-name { font-weight: 500; color: var(--navy); }
+  .student-email { font-size: 12px; color: var(--text-muted); }
+  .status-pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px; border-radius: 999px; font-size: 11px; font-weight: 600; font-family: 'Syne', sans-serif; }
+  .status-pill.offline { background: var(--cream-dark); color: var(--text-muted); }
+  .mini-progress { display: flex; align-items: center; gap: 8px; }
+  .mini-bar { width: 80px; height: 6px; background: var(--cream-dark); border-radius: 999px; overflow: hidden; }
+  .mini-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--teal), var(--teal-dark)); }
+  .mini-pct { font-size: 12px; font-weight: 600; color: var(--navy); font-family: 'Syne', sans-serif; }
+  .tag { display: inline-block; padding: 3px 10px; background: var(--teal-light); color: var(--teal-dark); border-radius: 5px; font-size: 11px; font-weight: 600; font-family: 'Syne', sans-serif; }
+  .loading { text-align: center; padding: 40px; color: var(--text-muted); font-size: 14px; }
+
+  /* ═══ CORRIGE ═══ */
+  .btn-download { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background: var(--teal); color: white; border: none; border-radius: 10px; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; text-decoration: none; transition: background 0.2s; }
+  .btn-download:hover { background: var(--teal-dark); }
+  .btn-download.outline { background: white; color: var(--teal); border: 2px solid var(--teal); }
+  /* ═══ AUTO-EVAL ═══ */
+  #screen-autoeval { flex-direction: column; }
+  .autoeval-layout { max-width: 900px; margin: 0 auto; width: 100%; padding: 40px; }
+  .rncp-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--teal-light); color: var(--teal-dark); padding: 6px 14px; border-radius: 999px; font-size: 12px; font-weight: 700; font-family: 'Syne', sans-serif; margin-bottom: 16px; }
+  .bloc-section { background: white; border-radius: 16px; padding: 28px; box-shadow: var(--shadow); margin-bottom: 20px; }
+  .bloc-title { font-size: 15px; font-weight: 800; color: var(--teal); font-family: 'Syne', sans-serif; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .bloc-subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+  .competence-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--cream-dark); }
+  .competence-row:last-child { border-bottom: none; }
+  .competence-label { font-size: 14px; color: var(--text); flex: 1; line-height: 1.5; }
+  .niveau-btns { display: flex; gap: 6px; flex-shrink: 0; }
+  .niveau-btn { padding: 6px 12px; border-radius: 8px; border: 1.5px solid var(--border); background: white; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .niveau-btn.active-na { background: #fee2e2; border-color: var(--danger); color: var(--danger); }
+  .niveau-btn.active-pa { background: #fff7ed; border-color: #f59e0b; color: #b45309; }
+  .niveau-btn.active-ac { background: var(--teal-light); border-color: var(--teal); color: var(--teal-dark); }
+  .niveau-btn.active-ma { background: var(--success-light); border-color: var(--success); color: var(--success); }
+  .autoeval-footer { background: white; border-radius: 16px; padding: 28px; box-shadow: var(--shadow); display: flex; align-items: center; justify-content: space-between; }
+  /* ═══ MODAL ═══ */
+  .modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center; }
+  .modal-overlay.open { display:flex; }
+  .modal { background:white; border-radius:20px; padding:36px; max-width:700px; width:90%; max-height:85vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.2); }
+  .modal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; padding-bottom:20px; border-bottom:2px solid var(--teal); }
+  .modal-header h2 { font-size:20px; font-weight:800; color:var(--navy); }
+  .modal-close { width:36px; height:36px; border-radius:50%; border:none; background:var(--cream-dark); cursor:pointer; font-size:18px; display:flex; align-items:center; justify-content:center; }
+  .modal-section { margin-bottom:24px; }
+  .modal-section h3 { font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); margin-bottom:12px; }
+  .session-row { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-radius:8px; background:var(--cream); margin-bottom:6px; font-size:13px; }
+  .ae-niveau { padding:3px 10px; border-radius:999px; font-size:11px; font-weight:700; }
+  .ae-na { background:#fee2e2; color:#c0392b; } .ae-pa { background:#fff7ed; color:#b45309; }
+  .ae-ac { background:var(--teal-light); color:var(--teal-dark); } .ae-ma { background:var(--success-light); color:var(--success); }
+  /* ═══ UPLOAD ═══ */
+  .upload-zone { border: 2px dashed var(--teal); border-radius: 14px; padding: 40px 24px; text-align: center; cursor: pointer; transition: all 0.2s; background: white; }
+  .upload-zone:hover, .upload-zone.dragover { background: var(--teal-light); border-color: var(--teal-dark); }
+  .upload-zone.uploaded { border-color: var(--success); background: var(--success-light); }
+  .upload-input { display: none; }
+  .upload-progress { background: var(--cream-dark); border-radius: 999px; height: 6px; margin: 16px 0 8px; overflow: hidden; display: none; }
+  .upload-progress-fill { height: 100%; background: linear-gradient(90deg, var(--teal), var(--teal-dark)); border-radius: 999px; transition: width 0.3s; }
+  .rendu-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--cream); border-radius: 10px; margin-bottom: 8px; }
+  /* ═══ OPEN QUESTION ═══ */
+  .open-textarea { width: 100%; min-height: 120px; padding: 14px 16px; border: 1.5px solid var(--border); border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 14px; resize: vertical; outline: none; transition: border-color 0.2s; line-height: 1.6; }
+  .open-textarea:focus { border-color: var(--teal); }
+  .open-badge { display: inline-flex; align-items: center; gap: 5px; background: #fff7ed; color: #b45309; padding: 4px 12px; border-radius: 999px; font-size: 11px; font-weight: 700; font-family: 'Syne', sans-serif; margin-bottom: 10px; }
+  .ai-feedback { margin-top: 16px; background: var(--navy); border-radius: 12px; padding: 20px 24px; display: none; }
+  .ai-feedback.visible { display: block; }
+  .ai-score { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: var(--teal); }
+  .ai-feedback-text { font-size: 14px; color: rgba(255,255,255,0.85); line-height: 1.7; }
+  .ai-dot { width: 6px; height: 6px; background: var(--teal); border-radius: 50%; animation: bounce 1.2s infinite; }
+  /* ═══ CHATBOT ═══ */
+  .chat-bubble { position: fixed; bottom: 28px; right: 28px; z-index: 500; }
+  .chat-toggle { width: 58px; height: 58px; border-radius: 50%; background: var(--teal); border: none; cursor: pointer; box-shadow: 0 4px 20px rgba(75,191,191,0.4); display: flex; align-items: center; justify-content: center; font-size: 24px; transition: all 0.2s; color: white; }
+  .chat-window { position: fixed; bottom: 100px; right: 28px; width: 380px; height: 520px; background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: none; flex-direction: column; z-index: 500; overflow: hidden; }
+  .chat-window.open { display: flex; }
+  .chat-header { background: var(--navy); padding: 16px 20px; display: flex; align-items: center; gap: 12px; }
+  .chat-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--teal); display: flex; align-items: center; justify-content: center; font-size: 18px; }
+  .chat-header-name { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: white; }
+  .chat-header-status { font-size: 11px; color: rgba(255,255,255,0.5); }
+  .chat-close { background: none; border: none; color: rgba(255,255,255,0.5); font-size: 18px; cursor: pointer; }
+  .chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .chat-msg { max-width: 85%; }
+  .chat-msg.bot { align-self: flex-start; }
+  .chat-msg.user { align-self: flex-end; }
+  .chat-msg-bubble { padding: 12px 14px; border-radius: 14px; font-size: 13px; line-height: 1.6; }
+  .chat-msg.bot .chat-msg-bubble { background: var(--cream); color: var(--text); }
+  .chat-msg.user .chat-msg-bubble { background: var(--teal); color: white; }
+  .chat-msg-time { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
+  .chat-typing-bubble { background: var(--cream); border-radius: 14px; padding: 12px 14px; display: flex; gap: 4px; align-items: center; }
+  .chat-input-wrap { padding: 12px 16px; border-top: 1px solid var(--border); display: flex; gap: 8px; align-items: flex-end; }
+  .chat-input { flex: 1; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 13px; resize: none; outline: none; max-height: 100px; }
+  .chat-input:focus { border-color: var(--teal); }
+  .chat-send { width: 38px; height: 38px; border-radius: 10px; background: var(--teal); border: none; cursor: pointer; font-size: 16px; }
+  .chat-send:disabled { opacity: 0.4; }
+  .chat-suggestions { padding: 8px 16px; display: flex; flex-wrap: wrap; gap: 6px; border-top: 1px solid var(--border); }
+  .chat-suggestion { padding: 5px 12px; border-radius: 999px; border: 1.5px solid var(--teal); background: white; color: var(--teal); font-size: 11px; font-weight: 600; cursor: pointer; font-family: 'Syne', sans-serif; }
+  .chat-suggestion:hover { background: var(--teal); color: white; }
+  /* ═══ DEBRIEF ═══ */
+  #screen-debrief { flex-direction: column; }
+  .debrief-layout { max-width: 800px; margin: 0 auto; width: 100%; padding: 40px; }
+  .debrief-hero { background: var(--navy); border-radius: 20px; padding: 40px; text-align: center; margin-bottom: 28px; }
+  .debrief-score { font-family: 'Syne', sans-serif; font-size: 72px; font-weight: 800; color: var(--teal); line-height: 1; margin-bottom: 8px; }
+  .debrief-title { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: white; margin-bottom: 8px; }
+  .debrief-sub { font-size: 14px; color: rgba(255,255,255,0.6); }
+  .debrief-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+  .debrief-card { background: white; border-radius: 16px; padding: 24px; box-shadow: var(--shadow); }
+  .debrief-card-title { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid var(--teal); }
+  .keypoint-item { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--cream-dark); font-size: 13px; }
+  .keypoint-num { width: 22px; height: 22px; border-radius: 6px; background: var(--teal-light); color: var(--teal-dark); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+  .debrief-next { background: white; border-radius: 16px; padding: 24px; box-shadow: var(--shadow); margin-bottom: 24px; display: flex; align-items: center; gap: 20px; }
+  .debrief-progress { background: white; border-radius: 16px; padding: 20px 24px; box-shadow: var(--shadow); margin-bottom: 28px; display: flex; align-items: center; gap: 20px; }
+  .progress-steps { display: flex; gap: 6px; }
+  .progress-step { flex: 1; height: 8px; border-radius: 999px; background: var(--cream-dark); }
+  .progress-step.done { background: var(--teal); }
+  /* ═══ CONFETTI ═══ */
+  .confetti-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; overflow: hidden; }
+  .confetti-piece { position: absolute; top: -10px; animation: confettiFall linear forwards; }
+  @keyframes confettiFall { to { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
+  /* ═══ LOGOUT ═══ */
+  .logout-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 200; align-items: center; justify-content: center; }
+  .logout-modal.open { display: flex; }
+  .logout-box { background: white; border-radius: 16px; padding: 32px; max-width: 360px; width: 90%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+  .logout-btns { display: flex; gap: 12px; }
+  .logout-btns button { flex: 1; padding: 12px; border-radius: 10px; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; }
+  .btn-cancel-logout { border: 1.5px solid var(--border); background: white; color: var(--text-muted); }
+  .btn-confirm-logout { border: none; background: var(--danger); color: white; }
+  .motivation-banner { background: linear-gradient(135deg, var(--teal), var(--teal-dark)); border-radius: 12px; padding: 14px 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+  .motivation-banner p { font-size: 14px; color: white; font-weight: 500; }
+
+</style>
+</head>
+<body>
+
+<!-- ═══ LOGIN ═══ -->
+<div id="screen-login" class="screen active">
+  <div class="login-left">
+    <div class="brand">
+      <div class="brand-name">ECEMA <span>Limoges</span></div>
+      <div class="brand-sub">Plateforme Pédagogique</div>
+    </div>
+    <div class="login-hero">
+      <h2>Apprenez à<br>votre <em>rythme</em>,<br>progressons ensemble.</h2>
+      <p>Accédez à vos ressources, validez vos modules et suivez votre progression en temps réel.</p>
+    </div>
+    <div class="login-stats">
+      <div class="stat"><div class="stat-val">4</div><div class="stat-label">Séquences</div></div>
+      <div class="stat"><div class="stat-val">7h</div><div class="stat-label">De formation</div></div>
+      <div class="stat"><div class="stat-val">100%</div><div class="stat-label">En ligne</div></div>
+    </div>
+  </div>
+  <div class="login-right">
+    <div class="login-form-wrap">
+      <h3>Connexion</h3>
+      <p>Bienvenue sur votre espace pédagogique</p>
+      <div class="role-tabs">
+        <button class="role-tab active" onclick="setRole('student')">👤 Étudiant</button>
+        <button class="role-tab" onclick="setRole('admin')">🛡️ Administrateur</button>
+      </div>
+      <div class="form-group">
+        <label>Adresse e-mail</label>
+        <input type="email" id="login-email" placeholder="prenom.nom@e-cdp.com">
+      </div>
+      <div class="form-group">
+        <label>Mot de passe</label>
+        <input type="password" id="login-password" placeholder="••••••••">
+      </div>
+      <button class="btn-primary" onclick="doLogin()">Accéder à ma formation →</button>
+      <div class="error-msg" id="error-msg">Email ou mot de passe incorrect.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ STUDENT ═══ -->
+<div id="screen-student" class="screen">
+  <nav class="top-nav">
+    <div class="nav-brand">ECEMA <span>Limoges</span></div>
+    <div class="nav-right">
+      <div class="nav-user">
+        <div class="avatar" id="nav-avatar">?</div>
+        <span id="nav-name">Étudiant</span>
+      </div>
+      <button class="btn-logout" onclick="askLogout()">Déconnexion</button>
+    </div>
+  </nav>
+  <div class="student-layout">
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <div class="progress-title">Ma progression</div>
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" id="sidebar-progress" style="width:0%"></div></div>
+        <div class="progress-pct" id="sidebar-pct">0%</div>
+        <div class="progress-label" id="sidebar-label">0 séquence sur 4 validée</div>
+      </div>
+      <div class="sidebar-card">
+        <div class="progress-title">L'IA au service des RH</div>
+        <ul class="module-list" id="module-list"></ul>
+      </div>
+    </aside>
+    <main class="main-content">
+      <div class="session-timer">
+        <div class="timer-left">
+          <div class="timer-dot"></div>
+          <div>
+            <div class="timer-label">Temps de connexion</div>
+            <div class="timer-val" id="timer-display">00:00:00</div>
+          </div>
+        </div>
+        <div class="timer-info">Session tracée automatiquement</div>
+      </div>
+      <div id="module-content"></div>
+      <div id="quiz-area" class="quiz-section">
+        <div class="quiz-header">
+          <h3 id="quiz-title">Quiz de validation</h3>
+          <span class="quiz-progress-text" id="quiz-progress-txt">Question 1 / 5</span>
+        </div>
+        <div class="countdown-wrap" id="countdown-wrap">
+          <div class="countdown-ring">
+            <svg width="52" height="52" viewBox="0 0 52 52">
+              <circle class="bg" cx="26" cy="26" r="22"/>
+              <circle class="fg" id="countdown-circle" cx="26" cy="26" r="22"/>
+            </svg>
+            <div class="countdown-num" id="countdown-num">10</div>
+          </div>
+          <div class="countdown-text">
+            <strong>Temps restant</strong>
+            10 secondes pour répondre
+          </div>
+        </div>
+        <div id="question-container"></div>
+        <div class="quiz-actions">
+          <button class="btn-secondary" id="btn-back" onclick="resetQuiz()">← Revoir le cours</button>
+          <button class="btn-validate" id="btn-validate" onclick="validateAnswer()" disabled>Valider →</button>
+        </div>
+        <div class="result-banner" id="result-banner">
+          <div class="result-icon" id="result-icon"></div>
+          <div class="result-text"><h4 id="result-title"></h4><p id="result-desc"></p></div>
+          <button class="btn-next" id="btn-next" onclick="nextQuestion()"></button>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ═══ ADMIN ═══ -->
+<div id="screen-admin" class="screen">
+  <nav class="top-nav">
+    <div class="nav-brand">ECEMA <span>Limoges</span> — Admin</div>
+    <div class="nav-right">
+      <div class="nav-user">
+        <div class="avatar">DA</div>
+        <span>Direction ECEMA</span>
+      </div>
+      <button class="btn-logout" onclick="askLogout()">Déconnexion</button>
+    </div>
+  </nav>
+  <div class="admin-layout">
+    <div class="admin-header">
+      <div>
+        <h1>Tableau de bord</h1>
+        <p>Mastère Management des RH — L'IA au service des RH · Promotion 2024-2026</p>
+      </div>
+      <div class="admin-date" id="admin-date">📅 Chargement...</div>
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-icon">👥</div><div class="kpi-val" id="kpi-total">—</div><div class="kpi-label">Étudiantes inscrites</div></div>
+      <div class="kpi-card"><div class="kpi-icon">🟢</div><div class="kpi-val" id="kpi-sessions">—</div><div class="kpi-label">Sessions enregistrées</div></div>
+      <div class="kpi-card"><div class="kpi-icon">⏱️</div><div class="kpi-val" id="kpi-time">—</div><div class="kpi-label">Temps moyen / session</div></div>
+      <div class="kpi-card"><div class="kpi-icon">✅</div><div class="kpi-val" id="kpi-valid">—</div><div class="kpi-label">Quiz validés</div></div>
+    </div>
+    <div class="table-card">
+      <div class="table-header"><h3>Suivi individuel</h3></div>
+      <div id="admin-table-body"><div class="loading">Chargement...</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// SUPABASE
+// ═══════════════════════════════════════
+const SUPABASE_URL = 'https://vgbrnsqhhfnxspbaxhdp.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZnYnJuc3FoaGZueHNwYmF4aGRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MzIyNTYsImV4cCI6MjA5MDAwODI1Nn0.zSYjcau0HxyAbY-wAcyLfa5-oBrDSBGrnGhpU3x-Das';
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+const ADMIN_EMAIL = 'direction@ecema.fr';
+const ADMIN_PASSWORD = 'ecema-admin2024';
+
+// ═══════════════════════════════════════
+// COURSE DATA
+// ═══════════════════════════════════════
+const MODULES = [
+  {
+    num: 1,
+    titre: "Introduction à l'IA & tendances RH",
+    description: "Comprendre les fondamentaux de l'IA, le Machine Learning, le NLP et les grandes tendances qui transforment la fonction RH.",
+    ressources: {
+      videos: [
+        { nom: "L'IA transforme les RH — Webinar Replay", url: "https://youtu.be/_Vtg8AbOMhc", duree: "~45 min", desc: "Replay complet du webinar sur la transformation de la fonction RH par l'IA" },
+        { nom: "La révolution silencieuse de l'IA sur le métier du DRH", url: "https://youtu.be/vmA8D0eVf6g", duree: "~20 min", desc: "Comment l'IA redéfinit en profondeur le rôle et les missions du DRH" },
+      ],
+      articles: [
+        { nom: "Comment l'IA transforme le futur des RH", url: "https://www.parlonsrh.com/media/comment-lia-transforme-le-futur-de-la-fonction-rh-et-des-entreprises/", desc: "Parlons RH — Analyse approfondie de la transformation de la fonction RH" },
+        { nom: "IA et RH : impacts sur la gestion des compétences", url: "https://culture-rh.com/ia-rh-impacts-gestion-competences/", desc: "Culture RH — GEPP, people analytics et compétences à l'ère de l'IA" },
+      ]
+    },
+    quiz: [
+      { q: "Une DRH déploie un outil de People Analytics pour anticiper les départs. L'algorithme identifie que les collaborateurs ayant refusé une promotion sont 3x plus susceptibles de partir. Quel est le principal risque éthique ?", opts: ["L'outil est trop coûteux à maintenir", "L'algorithme peut encourager des actions préventives discriminatoires basées sur des comportements personnels légitimes", "Les données RH ne sont pas assez nombreuses pour être fiables", "Le modèle prédictif sera rapidement obsolète"], correct: 1, explanation: "Utiliser des comportements passés légitimes pour prédire et potentiellement sanctionner un collaborateur soulève des enjeux éthiques majeurs de discrimination et de surveillance." },
+      { q: "Parmi ces affirmations sur le Machine Learning en RH, laquelle est EXACTE ?", opts: ["Le ML reproduit exactement les règles définies par le programmeur", "Le ML apprend à partir des données et peut identifier des patterns que le programmeur n'avait pas anticipés", "Le ML nécessite obligatoirement des données structurées de type tableur", "Le ML et l'IA générative désignent la même technologie"], correct: 1, explanation: "Le Machine Learning apprend de manière autonome. Cette capacité à identifier des patterns non anticipés le rend puissant — et potentiellement risqué si les données sont biaisées." },
+      { q: "Selon McKinsey (2024), quelle proportion des tâches administratives RH est potentiellement automatisable ?", opts: ["Environ 15%", "Environ 28%", "Environ 42%", "Environ 67%"], correct: 2, explanation: "McKinsey (2024) estime qu'environ 42% des tâches administratives RH sont automatisables, impliquant une transformation profonde du métier RH." },
+      { q: "Le NLP (Natural Language Processing) est utilisé en RH principalement pour :", opts: ["Analyser les données de paie et détecter les anomalies", "Comprendre et générer du langage humain — fiches de poste, synthèses, chatbots candidats", "Créer des visualisations de données RH interactives", "Automatiser les calculs de congés et absences"], correct: 1, explanation: "Le NLP permet à l'IA de comprendre et générer du langage humain. En RH il sert à rédiger des fiches de poste inclusives, synthétiser des entretiens, alimenter des chatbots." },
+      { type: 'open', q: "Un cabinet RH envisage de déployer un outil de People Analytics pour prédire le turnover. Quelles sont selon vous les 2 conditions indispensables à réunir avant ce déploiement, et pourquoi ?", timer: 90, elements_cles: "qualité des données, conformité RGPD, PIA analyse d'impact, consentement collaborateurs, transparence, supervision humaine, biais potentiels, gouvernance des données, formation des RH" },
+    ]
+  },
+  {
+    num: 2,
+
+    titre: "IA et recrutement, IA et GEPP",
+    description: "Découvrir comment l'IA révolutionne le recrutement de bout en bout, et comment la GEPP bénéficie des capacités prédictives de l'IA.",
+    ressources: {
+      videos: [
+        { nom: "5 automatisations IA à implémenter dans toutes les entreprises", url: "https://youtu.be/unA3slO6aSY", duree: "~15 min", desc: "Cas pratiques d'automatisation IA applicables directement en entreprise" },
+        { nom: "GEPP et compétences : les nouveaux outils digitaux", url: "https://www.youtube.com/watch?v=FE3Xgq7OeFM", duree: "20 min", desc: "Comment digitaliser sa gestion des compétences" },
+      ],
+      articles: [
+        { nom: "Recrutement et Intelligence Artificielle", url: "https://www.grantthornton.fr/fr/insights/articles-et-publications/2025/recrutement-et-intelligence-artificielle/", desc: "Grant Thornton — RGPD, biais, AI Act et conformité dans le recrutement par IA" },
+        { nom: "Cas client SNCF — 365Talents", url: "https://365talents.com/fr/ressources/ebooks/cas-client-sncf/", desc: "365Talents — Retour d'expérience réel : 96% d'adoption, +35% mobilité interne" },
+      ],
+    },
+    quiz: [
+      { q: "L'Oréal a déployé le chatbot Mya pour la présélection. Quel résultat lui est principalement attribué ?", opts: ["Suppression de 40% des postes de recruteurs", "80% de gain de temps sur la présélection avec 92% de satisfaction candidats", "Réduction de 100% des biais de recrutement", "Doublement du nombre de candidatures reçues"], correct: 1, explanation: "Le chatbot Mya a permis 80% de gain de temps sur la présélection avec 92% de satisfaction candidats. Les recruteurs ont pu se concentrer sur les entretiens à forte valeur ajoutée." },
+      { q: "La cause profonde de l'abandon par Amazon de son outil IA de tri CV en 2018 était :", opts: ["Un coût de maintenance trop élevé", "L'algorithme avait appris sur des données historiques biaisées reflétant 10 ans de recrutements masculins", "Les recruteurs refusaient d'utiliser l'outil", "L'outil était trop lent pour traiter le volume de candidatures"], correct: 1, explanation: "L'algorithme avait été entraîné sur 10 ans de recrutements historiquement masculins. Il avait appris à pénaliser les CV contenant des mots 'féminins', reproduisant un biais structurel." },
+      { type: 'open', q: "Quels sont les 2 principaux risques d'un recrutement entièrement délégué à l'IA, sans supervision humaine ? Appuyez-vous sur des exemples du cours.", timer: 90, elements_cles: "biais algorithmiques, Amazon, discrimination, opacité décisions, droit à l'explication RGPD art 22, sur-optimisation profil type, manque diversité, déshumanisation expérience candidat" },
+      { q: "Dans une GEPP enrichie par l'IA, l'apport principal de l'algorithme est de :", opts: ["Remplacer les entretiens de carrière annuels", "Identifier en temps réel les écarts de compétences et recommander des parcours personnalisés", "Décider automatiquement des promotions et augmentations", "Évaluer la performance individuelle sans intervention managériale"], correct: 1, explanation: "L'IA dans la GEPP permet une cartographie dynamique et des recommandations personnalisées. Elle aide à la décision mais ne remplace pas le dialogue manager-collaborateur." },
+      { q: "Le RGPD impose, concernant les décisions RH automatisées significatives, que :", opts: ["Toute décision IA est autorisée si elle est documentée", "Toute décision significative fondée exclusivement sur traitement automatisé doit pouvoir être expliquée et contestée", "Les décisions IA en recrutement sont exemptées si elles réduisent les biais", "L'entreprise doit obtenir l'accord de la CNIL avant tout projet IA RH"], correct: 1, explanation: "L'article 22 du RGPD garantit le droit à l'explication et d'opposition pour toute décision automatisée significative. La personne peut exiger une révision humaine." },
+    ]
+  },
+  {
+    num: 3,
+
+    titre: "Éthique, biais algorithmiques et RGPD",
+    description: "Comprendre les biais algorithmiques, maîtriser le cadre juridique RGPD et AI Act, et adopter une posture éthique face aux outils d'IA RH.",
+    ressources: {
+      videos: [
+        { nom: "CNIL : Droits et devoirs des IA génératives (#172)", url: "https://youtu.be/xNqZySmkHKY", duree: "~30 min", desc: "La CNIL explique le cadre juridique des IA génératives et les droits des utilisateurs" },
+        { nom: "IA & biais cognitifs dans le recrutement", url: "https://youtu.be/oq6FD5-9Mw8", duree: "~20 min", desc: "Analyse des biais algorithmiques et cognitifs qui impactent le recrutement par IA" },
+      ],
+      articles: [
+        { nom: "10 biais algorithmiques à éviter en recrutement", url: "https://www.flatchr.io/blog/biais-algorithmiques-ia-recrutement", desc: "Flatchr — Guide complet des biais et comment les prévenir" },
+        { nom: "IA et RGPD : ce que les RH doivent savoir", url: "https://www.flatchr.io/blog/ia-rgpd-rh-recruter-conformite", desc: "Flatchr — Obligations RGPD et AI Act pour recruter en conformité" },
+      ],
+    },
+    quiz: [
+      { q: "Une entreprise utilise un algorithme favorisant les candidats des grandes écoles. Ce biais est principalement de type :", opts: ["Biais de confirmation cognitif", "Biais de sélection historique — l'algorithme reproduit les recrutements passés biaisés", "Biais de mesure lié à la qualité des données brutes", "Biais d'automatisation dû à un bug informatique"], correct: 1, explanation: "Quand l'algorithme est entraîné sur les recrutements historiques, il reproduit les critères implicites passés, y compris les biais liés au prestige des écoles ou aux profils 'traditionnellement recrutés'." },
+      { q: "L'AI Act 2024 classe les systèmes IA RH (recrutement, évaluation) en catégorie :", opts: ["Risque minimal — aucune obligation spécifique", "Risque limité — obligation d'information uniquement", "Haut risque — documentation, supervision humaine et audit obligatoires", "Risque inacceptable — interdits sur le territoire européen"], correct: 2, explanation: "L'AI Act classe les IA RH en 'haut risque' car elles impactent directement la carrière des personnes. Cela impose documentation technique, évaluation de conformité et supervision humaine." },
+      { type: 'open', q: "Qu'est-ce qu'un biais algorithmique ? En vous appuyant sur un exemple précis du cours, expliquez comment il se forme et comment une entreprise peut le prévenir.", timer: 90, elements_cles: "erreur systématique, données d'entraînement biaisées, biais historique, Amazon 2018, femmes pénalisées, audit indépendant, données représentatives, supervision humaine, équité algorithmique" },
+      { q: "Un candidat rejeté automatiquement par un ATS IA peut exercer, selon le RGPD :", opts: ["Aucun droit — la décision algorithmique est définitive", "Uniquement le droit de demander une explication écrite dans 30 jours", "Le droit à l'explication, d'opposition, et à une révision humaine de la décision (art. 22)", "Le droit de porter plainte uniquement auprès de la CNIL"], correct: 2, explanation: "L'article 22 du RGPD garantit le droit d'obtenir une explication, de contester et d'exiger une révision humaine pour toute décision automatisée produisant des effets significatifs." },
+      { q: "Quelle pratique illustre le mieux la 'supervision humaine' exigée par l'AI Act dans un processus de recrutement IA ?", opts: ["Vérifier chaque semaine que les serveurs fonctionnent correctement", "Pouvoir comprendre les critères de scoring, détecter des anomalies et prendre la décision finale indépendamment de l'IA", "Demander à l'éditeur un rapport mensuel sur les performances de l'algorithme", "Former tous les managers à l'utilisation de l'outil"], correct: 1, explanation: "La supervision humaine signifie que le RRH peut comprendre, questionner et corriger la recommandation IA, et prendre une décision autonome fondée sur son propre jugement professionnel." },
+    ]
+  },
+  {
+    num: 4,
+
+    titre: "Panorama d'outils RH intégrant l'IA",
+    description: "Découvrir les principales solutions IA RH du marché, savoir comment les choisir et les déployer, et maîtriser les usages de l'IA générative en RH.",
+    ressources: {
+      videos: [
+        { nom: "L'IA en recrutement en 2026", url: "https://youtu.be/H8nLVPcYBTU", duree: "~25 min", desc: "État de l'art et perspectives de l'IA dans le recrutement pour 2026" },
+        { nom: "Business Intelligence et IA pour les RH", url: "https://youtu.be/bAa438UYmn0", duree: "~20 min", desc: "Comment combiner BI et IA pour optimiser les décisions RH" },
+      ],
+      articles: [
+        { nom: "Automatisation des processus RH : outils et cas d'usage", url: "https://www.flatchr.io/blog/ia-automatisation-processus-rh-cas-usage", desc: "Flatchr — Panorama des automatisations IA dans les processus RH" },
+        { nom: "Top 3 des solutions IA pour les RH en 2024", url: "https://www.talentlens.com/fr/blog/solutions-ia-rh-2024.html", desc: "TalentLens — Les 3 solutions IA incontournables pour les professionnels RH" },
+      ],
+    },
+    quiz: [
+      { q: "Une PME veut déployer un outil IA pour le recrutement. Quelle est la première erreur à éviter ?", opts: ["Choisir un outil trop récent sans références clients", "Déployer sans avoir défini le problème précis à résoudre ni l'indicateur de succès mesurable", "Impliquer les managers dans le choix de l'outil", "Contacter la CNIL avant de commencer"], correct: 1, explanation: "9 projets IA sur 10 échouent faute d'avoir défini un problème précis et un indicateur mesurable. 'Améliorer le recrutement' est trop vague — 'Réduire le time-to-fill de 52 à 30 jours' est actionnable." },
+      { q: "La SNCF a déployé 365Talents pour 153 000 collaborateurs. Quel résultat illustre l'impact sur la mobilité interne ?", opts: ["Suppression de 20% des postes RH administratifs", "Augmentation de 35% des candidatures internes aux postes ouverts en 6 mois", "Réduction de 50% du budget formation annuel", "Automatisation complète des entretiens de carrière"], correct: 1, explanation: "En 6 mois, 365Talents a généré +35% de candidatures internes, prouvant que rendre visible les opportunités et les profils stimule la mobilité — sans remplacer le dialogue RH humain." },
+      { q: "Parmi ces usages de l'IA générative en RH, lequel présente le risque juridique le plus élevé ?", opts: ["Rédiger une première version de fiche de poste en écriture épicène", "Générer automatiquement des synthèses d'entretiens annuels versées aux dossiers collaborateurs", "Proposer des idées de questions pour un guide d'entretien", "Créer un brouillon de communication interne sur une nouvelle politique RH"], correct: 1, explanation: "Les synthèses d'entretiens sont des données RH sensibles. Leur génération automatique soulève des questions de consentement, fiabilité et RGPD — la décision d'évaluation doit rester humaine." },
+      { type: 'open', q: "Vous êtes RRH dans une ETI de 300 collaborateurs. La direction vous demande d'évaluer 2 solutions IA pour le recrutement. Quelles sont les 3 questions prioritaires à poser aux prestataires, et pourquoi ?", timer: 90, elements_cles: "conformité RGPD hébergement données, transparence algorithmique explicabilité, audit biais indépendant, supervision humaine intégrée, ROI mesurable références clients, formation accompagnement, coût TCO" },
+      { q: "Pourquoi la conduite du changement est-elle le principal facteur d'échec des projets IA RH ?", opts: ["Les outils IA sont techniquement trop complexes pour les équipes RH", "95% des projets échouent par manque d'adoption — l'outil le plus performant est inutile s'il n'est pas utilisé", "Les budgets formation sont insuffisants dans la plupart des entreprises", "Les syndicats s'opposent systématiquement aux projets IA"], correct: 1, explanation: "La technologie représente 20% du succès. Les 80% restants dépendent de l'adhésion des utilisateurs. Sans accompagnement, formation et communication, même le meilleur outil sera abandonné." },
+    ]
+  },
+];
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+let currentRole = 'student';
+let currentEtudiant = null;
+let sessionId = null;
+let timerInterval = null;
+let timerSeconds = 0;
+let currentModuleNum = 1;
+let currentQuestion = 0;
+let selectedOption = null;
+let answered = false;
+let score = 0;
+let modulesData = [];
+let countdownInterval = null;
+let countdownSeconds = 30;
+const TOTAL_TIME = 30;
+const CIRCUMFERENCE = 138;
+
+// ═══════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+}
+
+function setRole(role) {
+  currentRole = role;
+  document.querySelectorAll('.role-tab').forEach((t, i) => {
+    t.classList.toggle('active', (role === 'student' && i === 0) || (role === 'admin' && i === 1));
+  });
+  document.getElementById('login-email').value = role === 'admin' ? ADMIN_EMAIL : '';
+}
+
+// ═══════════════════════════════════════
+// LOGIN / LOGOUT
+// ═══════════════════════════════════════
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value.trim();
+  const errorMsg = document.getElementById('error-msg');
+  errorMsg.style.display = 'none';
+
+  if (currentRole === 'admin') {
+    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+      showScreen('admin');
+      loadAdminData();
+      document.getElementById('admin-date').textContent = '📅 ' + new Date().toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    } else { errorMsg.style.display = 'block'; }
+    return;
+  }
+
+  const { data, error } = await db.from('etudiants').select('*').eq('email', email).eq('mot_de_passe', password).single();
+  if (error || !data) { errorMsg.style.display = 'block'; return; }
+
+  currentEtudiant = data;
+  document.getElementById('nav-name').textContent = data.prenom + ' ' + data.nom;
+  document.getElementById('nav-avatar').textContent = data.prenom[0] + data.nom[0];
+
+  await startSession();
+  await loadProgression();
+  showScreen('student');
+  startTimer();
+}
+
+async function doLogout() {
+  if (sessionId) await endSession();
+  clearInterval(timerInterval);
+  clearInterval(countdownInterval);
+  timerSeconds = 0;
+  currentEtudiant = null;
+  sessionId = null;
+  document.getElementById('login-email').value = '';
+  document.getElementById('login-password').value = '';
+  resetQuizState();
+  showScreen('login');
+}
+
+// ═══════════════════════════════════════
+// SESSION
+// ═══════════════════════════════════════
+async function startSession() {
+  const { data } = await db.from('sessions').insert({ etudiant_id: currentEtudiant.id }).select().single();
+  if (data) sessionId = data.id;
+}
+
+async function endSession() {
+  await db.from('sessions').update({ deconnecte_a: new Date().toISOString(), duree_secondes: timerSeconds }).eq('id', sessionId);
+}
+
+function startTimer() {
+  timerSeconds = 0;
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    timerSeconds++;
+    const h = String(Math.floor(timerSeconds / 3600)).padStart(2, '0');
+    const m = String(Math.floor((timerSeconds % 3600) / 60)).padStart(2, '0');
+    const s = String(timerSeconds % 60).padStart(2, '0');
+    document.getElementById('timer-display').textContent = `${h}:${m}:${s}`;
+  }, 1000);
+}
+
+// ═══════════════════════════════════════
+// PROGRESSION
+// ═══════════════════════════════════════
+async function loadProgression() {
+  const { data } = await db.from('progression').select('*').eq('etudiant_id', currentEtudiant.id);
+  modulesData = data || [];
+  renderModuleList();
+  updateProgressBar();
+  renderCurrentModule();
+}
+
+function getValidatedNums() { return modulesData.filter(m => m.valide).map(m => m.module_numero); }
+
+function getMaxUnlocked() {
+  const validated = getValidatedNums();
+  return validated.length > 0 ? Math.min(Math.max(...validated) + 1, 4) : 1;
+}
+
+function renderModuleList() {
+  const validatedNums = getValidatedNums();
+  const maxUnlocked = getMaxUnlocked();
+  const list = document.getElementById('module-list');
+  list.innerHTML = MODULES.map(m => {
+    const isDone = validatedNums.includes(m.num);
+    const isCurrent = m.num === currentModuleNum;
+    const isLocked = m.num > maxUnlocked;
+    const iconClass = isLocked ? 'locked-icon' : (isDone ? 'done' : 'active-icon');
+    const icon = isLocked ? '🔒' : (isDone ? '✅' : '📖');
+    const itemClass = isLocked ? 'locked' : (isCurrent ? 'active' : '');
+    return `<li class="module-item ${itemClass}" onclick="${isLocked ? '' : 'goModule(' + m.num + ')'}">
+      <div class="module-icon ${iconClass}">${icon}</div>
+      <div class="module-item-title">${m.num}. ${m.titre}</div>
+    </li>`;
+  }).join('');
+}
+
+function updateProgressBar() {
+  const validated = getValidatedNums().length;
+  const allDone = validated >= 4;
+  const pct = Math.round((validated / 4) * 100);
+  document.getElementById('sidebar-progress').style.width = pct + '%';
+  document.getElementById('sidebar-pct').textContent = pct + '%';
+  document.getElementById('sidebar-label').textContent = allDone ? '🏆 Toutes les séquences validées !' : `${validated} séquence${validated > 1 ? 's' : ''} sur 4 validée${validated > 1 ? 's' : ''}`;
+}
+
+function goModule(num) {
+  currentModuleNum = num;
+  resetQuizState();
+  renderModuleList();
+  renderCurrentModule();
+}
+
+// ═══════════════════════════════════════
+// RENDER MODULE
+// ═══════════════════════════════════════
+function renderCurrentModule() {
+  const validatedNums = getValidatedNums();
+  const allDone = validatedNums.length >= 4;
+  const content = document.getElementById('module-content');
+
+  // EDC if all done
+  if (allDone && currentModuleNum > 4) {
+    content.innerHTML = `
+      <div class="edc-card">
+        <span class="edc-badge">🏆 Toutes les séquences validées</span>
+        <h2>Étude de Cas Finale — Cabinet Novatech RH</h2>
+        <p>Félicitations ! Vous avez validé les 4 séquences du cours. L'étude de cas finale est maintenant accessible.</p>
+        <p style="margin-bottom:20px">Travail individuel · Rendu écrit · PDF ou Word · 3 à 5 pages · Dépôt avant 20h00</p>
+        <div style="background:var(--teal-light);border-radius:12px;padding:20px;margin-bottom:20px">
+          <p style="font-weight:600;color:var(--navy);margin-bottom:8px">📋 Rappel des 4 questions :</p>
+          <p style="color:var(--text);font-size:14px;line-height:1.8">
+            1. Diagnostic — Identifiez les 3 signaux les plus préoccupants pour Novatech RH<br>
+            2. Proposition stratégique — Proposez 2 axes de transformation IA (budget : 150 000€)<br>
+            3. Éthique et conformité — Risques et mesures pour un algorithme de scoring candidats<br>
+            4. Conduite du changement — Plan en 3 étapes face aux résistances internes
+          </p>
+        </div>
+        <p style="font-size:13px;color:var(--danger);font-weight:600">⚠️ Rendu individuel uniquement — Dépôt sur la plateforme avant 20h00</p>
+      </div>`;
+    return;
+  }
+
+  const mod = MODULES.find(m => m.num === currentModuleNum);
+  if (!mod) return;
+
+  const isValidated = validatedNums.includes(mod.num);
+
+  content.innerHTML = `
+    <div class="content-header">
+      <div class="breadcrumb">L'IA au service des RH — Mastère Management des RH</div>
+      <h1>Séquence ${mod.num} — ${mod.titre}</h1>
+      <p>${mod.description}</p>
+    </div>
+    <div class="resource-tabs">
+      <button class="res-tab active" onclick="showTab('videos', this)">🎬 Vidéos</button>
+      <button class="res-tab" onclick="showTab('articles', this)">🔗 Articles</button>
+    </div>
+    <div id="tab-videos" class="resource-card">
+      <h3>🎬 Vidéos recommandées</h3>
+      <ul class="doc-list">
+        ${mod.ressources.videos.map(v => `
+          <a class="doc-item" href="${v.url}" target="_blank">
+            <div class="doc-icon">▶️</div>
+            <div class="doc-info">
+              <div class="doc-name">${v.nom}</div>
+              <div class="doc-meta">${v.desc} · ${v.duree}</div>
+            </div>
+            <span class="doc-badge yt">YouTube</span>
+          </a>`).join('')}
+      </ul>
+    </div>
+    <div id="tab-articles" class="resource-card" style="display:none">
+      <h3>🔗 Articles & lectures</h3>
+      <ul class="doc-list">
+        ${mod.ressources.articles.map(a => `
+          <a class="doc-item" href="${a.url}" target="_blank">
+            <div class="doc-icon">🔗</div>
+            <div class="doc-info">
+              <div class="doc-name">${a.nom}</div>
+              <div class="doc-meta">${a.desc}</div>
+            </div>
+            <span class="doc-badge link">Article</span>
+          </a>`).join('')}
+      </ul>
+    </div>
+    ${isValidated
+      ? `<div style="background:var(--success-light);border:1.5px solid #a7f3d0;border-radius:14px;padding:20px;text-align:center">
+          <p style="font-size:16px;font-weight:700;color:var(--success)">✅ Séquence validée — Bravo !</p>
+          ${currentModuleNum < 4 ? `<button class="btn-primary" style="width:auto;padding:12px 32px;margin-top:12px" onclick="goModule(${currentModuleNum + 1})">→ Séquence ${currentModuleNum + 1}</button>` : `<button class="btn-primary" style="width:auto;padding:12px 32px;margin-top:12px;background:var(--teal)" onclick="currentModuleNum=5;renderCurrentModule()">🏆 Accéder à l'étude de cas</button>`}
+        </div>`
+      : `<div style="text-align:center;margin:28px 0">
+          <button class="btn-primary" style="width:auto;padding:14px 40px" onclick="startQuiz()">🎯 Démarrer le Quiz de validation →</button>
+          <p style="margin-top:12px;font-size:13px;color:var(--text-muted)">5 questions · 10 secondes par question · Score minimum : 4/5</p>
+        </div>`
+    }`;
+}
+
+function showTab(tab, btn) {
+  ['videos', 'articles'].forEach(t => {
+    const el = document.getElementById('tab-' + t);
+    if (el) el.style.display = t === tab ? 'block' : 'none';
+  });
+  document.querySelectorAll('.res-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ═══════════════════════════════════════
+// QUIZ
+// ═══════════════════════════════════════
+function startQuiz() {
+  currentQuestion = 0; score = 0;
+  document.getElementById('module-content').style.display = 'none';
+  document.getElementById('quiz-area').classList.add('visible');
+  const mod = MODULES.find(m => m.num === currentModuleNum);
+  document.getElementById('quiz-title').textContent = `Quiz — Séquence ${mod.num} : ${mod.titre}`;
+  renderQuestion();
+}
+
+function resetQuizState() {
+  clearInterval(countdownInterval);
+  document.getElementById('module-content').style.display = 'block';
+  document.getElementById('quiz-area').classList.remove('visible');
+  currentQuestion = 0; score = 0; selectedOption = null; answered = false;
+  document.getElementById('btn-validate').style.display = '';
+  document.getElementById('btn-back').style.display = '';
+  document.getElementById('result-banner').className = 'result-banner';
+}
+
+function resetQuiz() { resetQuizState(); renderCurrentModule(); }
+
+function renderQuestion() {
+  const mod = MODULES.find(m => m.num === currentModuleNum);
+  if (currentQuestion >= mod.quiz.length) { showFinalResult(); return; }
+  selectedOption = null; answered = false;
+  document.getElementById('btn-validate').disabled = true;
+  document.getElementById('result-banner').className = 'result-banner';
+  document.getElementById('quiz-progress-txt').textContent = `Question ${currentQuestion + 1} / ${mod.quiz.length}`;
+  const q = mod.quiz[currentQuestion];
+  const letters = ['A', 'B', 'C', 'D'];
+  document.getElementById('question-container').innerHTML = `
+    <div class="question-card">
+      <div class="question-num">Question ${currentQuestion + 1}</div>
+      <div class="question-text">${q.q}</div>
+      <ul class="options-list">
+        ${q.opts.map((opt, i) => `
+          <li class="option" id="opt-${i}" onclick="selectOption(${i})">
+            <div class="option-letter">${letters[i]}</div>
+            <div class="option-text">${opt}</div>
+          </li>`).join('')}
+      </ul>
+    </div>`;
+  startCountdown();
+}
+
+function startCountdown() {
+  clearInterval(countdownInterval);
+  countdownSeconds = TOTAL_TIME;
+  updateCountdownUI();
+  countdownInterval = setInterval(() => {
+    countdownSeconds--;
+    updateCountdownUI();
+    if (countdownSeconds <= 0) {
+      clearInterval(countdownInterval);
+      timeOut();
+    }
+  }, 1000);
+}
+
+function updateCountdownUI() {
+  const num = document.getElementById('countdown-num');
+  const circle = document.getElementById('countdown-circle');
+  if (!num || !circle) return;
+  num.textContent = countdownSeconds;
+  const offset = CIRCUMFERENCE * (1 - countdownSeconds / TOTAL_TIME);
+  circle.style.strokeDashoffset = offset;
+  circle.className = 'fg' + (countdownSeconds <= 3 ? ' danger' : countdownSeconds <= 5 ? ' warning' : '');
+}
+
+function timeOut() {
+  answered = true;
+  document.querySelectorAll('.option').forEach(o => o.classList.add('disabled'));
+  document.getElementById('btn-validate').disabled = true;
+  const banner = document.getElementById('result-banner');
+  banner.className = 'result-banner timeout';
+  document.getElementById('result-icon').textContent = '⏰';
+  document.getElementById('result-title').textContent = 'Temps écoulé !';
+  document.getElementById('result-desc').textContent = 'Vous n\'avez pas répondu à temps.';
+  const isLast = currentQuestion === MODULES.find(m => m.num === currentModuleNum).quiz.length - 1;
+  const nextBtn = document.getElementById('btn-next');
+  nextBtn.textContent = isLast ? 'Voir mon résultat →' : 'Question suivante →';
+}
+
+function selectOption(idx) {
+  if (answered) return;
+  selectedOption = idx;
+  document.querySelectorAll('.option').forEach((o, i) => o.classList.toggle('selected', i === idx));
+  document.getElementById('btn-validate').disabled = false;
+}
+
+function validateAnswer() {
+  if (selectedOption === null || answered) return;
+  clearInterval(countdownInterval);
+  answered = true;
+  const mod = MODULES.find(m => m.num === currentModuleNum);
+  const q = mod.quiz[currentQuestion];
+  const isCorrect = selectedOption === q.correct;
+  if (isCorrect) score++;
+
+  // Ne montrer que correct/incorrect — PAS la bonne réponse si faux
+  document.getElementById('opt-' + selectedOption).classList.add(isCorrect ? 'correct' : 'wrong');
+  document.querySelectorAll('.option').forEach(o => o.classList.add('disabled'));
+
+  const banner = document.getElementById('result-banner');
+  banner.className = 'result-banner ' + (isCorrect ? 'success' : 'fail');
+  document.getElementById('result-icon').textContent = isCorrect ? '✅' : '❌';
+  document.getElementById('result-title').textContent = isCorrect ? 'Bonne réponse !' : 'Réponse incorrecte';
+  // Pas d'explication affichée en cas d'erreur
+  document.getElementById('result-desc').textContent = isCorrect ? 'Continuez comme ça !' : 'Relisez bien le cours pour cette notion.';
+
+  const isLast = currentQuestion === mod.quiz.length - 1;
+  document.getElementById('btn-next').textContent = isLast ? 'Voir mon résultat →' : 'Question suivante →';
+  document.getElementById('btn-validate').disabled = true;
+}
+
+function nextQuestion() { currentQuestion++; renderQuestion(); }
+
+async function showFinalResult() {
+  clearInterval(countdownInterval);
+  const pass = score >= 4;
+  const mod = MODULES.find(m => m.num === currentModuleNum);
+
+  document.getElementById('countdown-wrap').style.display = 'none';
+  document.getElementById('question-container').innerHTML = `
+    <div class="question-card" style="text-align:center;padding:48px 32px">
+      <div style="font-size:56px;margin-bottom:20px">${pass ? '🏆' : '📚'}</div>
+      <h3 style="font-size:26px;color:var(--navy);margin-bottom:12px">${pass ? 'Séquence validée !' : 'Quiz non validé'}</h3>
+      <p style="color:var(--text-muted);font-size:16px;margin-bottom:24px">
+        Vous avez obtenu <strong style="color:var(--navy);font-size:24px">${score}/5</strong>
+        ${pass
+          ? (currentModuleNum < 4 ? ` — La séquence ${currentModuleNum + 1} est débloquée !` : ' — Toutes les séquences sont validées !')
+          : ' — Score minimum requis : 4/5. Relisez le cours et réessayez.'}
+      </p>
+      <button class="btn-primary" style="width:auto;padding:12px 32px" onclick="${pass ? 'afterPass()' : 'retryQuiz()'}">
+        ${pass ? (currentModuleNum < 4 ? `→ Séquence ${currentModuleNum + 1}` : '🏆 Accéder à l\'étude de cas') : '↩ Revoir le cours et réessayer'}
+      </button>
+    </div>`;
+  document.getElementById('result-banner').className = 'result-banner';
+  document.getElementById('btn-validate').style.display = 'none';
+  document.getElementById('btn-back').style.display = 'none';
+  document.getElementById('quiz-progress-txt').textContent = 'Résultat final';
+
+  if (pass && currentEtudiant) {
+    await db.from('progression').upsert({
+      etudiant_id: currentEtudiant.id,
+      module_numero: currentModuleNum,
+      valide: true,
+      score_quiz: score,
+      validated_at: new Date().toISOString()
+    }, { onConflict: 'etudiant_id,module_numero' });
+    await loadProgression();
+  }
+}
+
+async function afterPass() {
+  document.getElementById('countdown-wrap').style.display = '';
+  resetQuizState();
+  if (currentModuleNum < 4) {
+    currentModuleNum++;
+  } else {
+    currentModuleNum = 5;
+  }
+  renderModuleList();
+  renderCurrentModule();
+}
+
+function retryQuiz() {
+  document.getElementById('countdown-wrap').style.display = '';
+  document.getElementById('btn-validate').style.display = '';
+  document.getElementById('btn-back').style.display = '';
+  currentQuestion = 0; score = 0; selectedOption = null; answered = false;
+  renderQuestion();
+}
+
+// ═══════════════════════════════════════
+// ADMIN
+// ═══════════════════════════════════════
+async function loadAdminData() {
+  const { data: etudiants } = await db.from('etudiants').select('*');
+  if (!etudiants) return;
+  document.getElementById('kpi-total').textContent = etudiants.length;
+  const { data: sessions } = await db.from('sessions').select('*');
+  document.getElementById('kpi-sessions').textContent = sessions ? sessions.length : 0;
+  const sessionsWithDuration = sessions ? sessions.filter(s => s.duree_secondes) : [];
+  if (sessionsWithDuration.length > 0) {
+    const avg = Math.round(sessionsWithDuration.reduce((a, b) => a + b.duree_secondes, 0) / sessionsWithDuration.length);
+    const h = Math.floor(avg / 3600);
+    const m = Math.floor((avg % 3600) / 60);
+    document.getElementById('kpi-time').textContent = h > 0 ? `${h}h${String(m).padStart(2,'0')}` : `${m} min`;
+  } else { document.getElementById('kpi-time').textContent = '—'; }
+  const { data: progressions } = await db.from('progression').select('*');
+  document.getElementById('kpi-valid').textContent = progressions ? progressions.filter(p => p.valide).length : 0;
+
+  const rows = etudiants.map(e => {
+    const etudiantSessions = sessions ? sessions.filter(s => s.etudiant_id === e.id) : [];
+    const etudiantProgressions = progressions ? progressions.filter(p => p.etudiant_id === e.id && p.valide) : [];
+    const totalSecondes = etudiantSessions.reduce((a, b) => a + (b.duree_secondes || 0), 0);
+    const h = Math.floor(totalSecondes / 3600);
+    const m = Math.floor((totalSecondes % 3600) / 60);
+    const tempsTotal = totalSecondes > 0 ? (h > 0 ? `${h}h${String(m).padStart(2,'0')}` : `${m} min`) : '0 min';
+    const derniereSessions = etudiantSessions.sort((a, b) => new Date(b.connecte_a) - new Date(a.connecte_a));
+    const derniereConnexion = derniereSessions.length > 0
+      ? new Date(derniereSessions[0].connecte_a).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
+      : 'Jamais';
+    const modulesValides = etudiantProgressions.length;
+    const pct = Math.round((modulesValides / 4) * 100);
+    const initiales = e.prenom[0] + e.nom[0];
+    return `<tr>
+      <td><div class="student-cell"><div class="avatar-sm">${initiales}</div><div><div class="student-name">${e.prenom} ${e.nom}</div><div class="student-email">${e.email}</div></div></div></td>
+      <td><span class="status-pill offline">⚫ Hors ligne</span></td>
+      <td><div class="mini-progress"><div class="mini-bar"><div class="mini-fill" style="width:${pct}%"></div></div><span class="mini-pct">${pct}%</span></div></td>
+      <td>${tempsTotal}</td>
+      <td>${derniereConnexion}</td>
+      <td><span class="tag">${modulesValides}/4</span></td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('admin-table-body').innerHTML = `<table>
+    <thead><tr><th>Étudiante</th><th>Statut</th><th>Progression</th><th>Temps total</th><th>Dernière connexion</th><th>Séquences validées</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+</script>
+
+<!-- LOGOUT CONFIRM -->
+<div class="logout-modal" id="logout-modal">
+  <div class="logout-box">
+    <div style="font-size:40px;margin-bottom:12px">👋</div>
+    <h3>Vous déconnecter ?</h3>
+    <p>Votre progression est sauvegardée automatiquement.</p>
+    <div class="logout-btns">
+      <button class="btn-cancel-logout" onclick="cancelLogout()">Rester</button>
+      <button class="btn-confirm-logout" onclick="confirmLogout()">Se déconnecter</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFETTI -->
+<div class="confetti-container" id="confetti-container"></div>
+
+<!-- MODAL DÉTAIL ÉTUDIANT -->
+<div class="modal-overlay" id="modal-detail">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modal-title">Détail étudiant</h2>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<!-- CHATBOT -->
+<div class="chat-bubble" id="chat-bubble" style="display:none">
+  <button class="chat-toggle" onclick="toggleChat()" title="Assistant pédagogique">
+    🎓
+    <div class="notif" id="chat-notif" style="display:none;position:absolute;top:-2px;right:-2px;width:16px;height:16px;background:#C0392B;border-radius:50%;border:2px solid white;"></div>
+  </button>
+</div>
+<div class="chat-window" id="chat-window">
+  <div class="chat-header">
+    <div class="chat-avatar">🎓</div>
+    <div style="flex:1">
+      <div class="chat-header-name">Alex — Tuteur IA RH</div>
+      <div class="chat-header-status">Assistant pédagogique · Disponible</div>
+    </div>
+    <button class="chat-close" onclick="toggleChat()">✕</button>
+  </div>
+  <div class="chat-messages" id="chat-messages"></div>
+  <div class="chat-suggestions" id="chat-suggestions">
+    <button class="chat-suggestion" onclick="sendSuggestion(this)">📚 Résumé de la séquence</button>
+    <button class="chat-suggestion" onclick="sendSuggestion(this)">💡 Exemple concret</button>
+    <button class="chat-suggestion" onclick="sendSuggestion(this)">🎯 Aide pour l'EDC</button>
+    <button class="chat-suggestion" onclick="sendSuggestion(this)">⚖️ RGPD / AI Act</button>
+  </div>
+  <div class="chat-input-wrap">
+    <textarea class="chat-input" id="chat-input" placeholder="Posez votre question..." rows="1" onkeydown="chatKeydown(event)" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+    <button class="chat-send" id="chat-send" onclick="sendMessage()">➤</button>
+  </div>
+</div>
+
+<!-- DEBRIEF SCREEN -->
+<div id="screen-debrief" class="screen">
+  <nav class="top-nav">
+    <div class="nav-brand">ECEMA <span>Limoges</span></div>
+    <div class="nav-right">
+      <div class="nav-user">
+        <div class="avatar" id="db-avatar">?</div>
+        <span id="db-name">Étudiant</span>
+      </div>
+      <button class="btn-logout" onclick="askLogout()">Déconnexion</button>
+    </div>
+  </nav>
+  <div class="debrief-layout" id="debrief-content"></div>
+</div>
+
+<!-- AUTOEVAL SCREEN -->
+<div id="screen-autoeval" class="screen" style="flex-direction:column">
+  <nav class="top-nav">
+    <div class="nav-brand">ECEMA <span>Limoges</span></div>
+    <div class="nav-right">
+      <div class="nav-user">
+        <div class="avatar" id="ae-avatar">?</div>
+        <span id="ae-name">Étudiant</span>
+      </div>
+      <button class="btn-logout" onclick="askLogout()">Déconnexion</button>
+    </div>
+  </nav>
+  <div class="autoeval-layout" style="max-width:900px;margin:0 auto;width:100%;padding:40px">
+    <div style="margin-bottom:32px">
+      <span class="rncp-badge">📋 RNCP 37851 — Manager des Ressources Humaines — Niveau 7</span>
+      <h1 style="font-size:28px;font-weight:800;color:var(--navy);margin:12px 0 8px">Auto-évaluation des compétences</h1>
+      <p style="color:var(--text-muted);font-size:15px">Évaluez honnêtement votre niveau à l'issue de cette journée de formation.</p>
+    </div>
+    <div class="bloc-section">
+      <div class="bloc-title">BC01 — Mise en œuvre de la politique RH</div>
+      <div class="bloc-subtitle">Piloter les effectifs via la GEPP, optimiser recrutement et mobilité</div>
+      <div class="competence-row"><div class="competence-label">Intégrer l'IA dans un processus GEPP</div><div class="niveau-btns" data-id="c1"><button class="niveau-btn" onclick="setNiveau('c1','na',this)">❌ Non acquis</button><button class="niveau-btn" onclick="setNiveau('c1','pa',this)">🔶 Partiel</button><button class="niveau-btn" onclick="setNiveau('c1','ac',this)">✅ Acquis</button><button class="niveau-btn" onclick="setNiveau('c1','ma',this)">⭐ Maîtrisé</button></div></div>
+      <div class="competence-row"><div class="competence-label">Utiliser des outils d'IA pour optimiser le recrutement et la mobilité interne</div><div class="niveau-btns" data-id="c2"><button class="niveau-btn" onclick="setNiveau('c2','na',this)">❌ Non acquis</button><button class="niveau-btn" onclick="setNiveau('c2','pa',this)">🔶 Partiel</button><button class="niveau-btn" onclick="setNiveau('c2','ac',this)">✅ Acquis</button><button class="niveau-btn" onclick="setNiveau('c2','ma',this)">⭐ Maîtrisé</button></div></div>
+    </div>
+    <div class="bloc-section">
+      <div class="bloc-title">BC02 — Optimisation de la performance sociale</div>
+      <div class="bloc-subtitle">Digitalisation RH, développement des compétences, conduite du changement</div>
+      <div class="competence-row"><div class="competence-label">Cartographier les activités RH digitalisables</div><div class="niveau-btns" data-id="c3"><button class="niveau-btn" onclick="setNiveau('c3','na',this)">❌ Non acquis</button><button class="niveau-btn" onclick="setNiveau('c3','pa',this)">🔶 Partiel</button><button class="niveau-btn" onclick="setNiveau('c3','ac',this)">✅ Acquis</button><button class="niveau-btn" onclick="setNiveau('c3','ma',this)">⭐ Maîtrisé</button></div></div>
+      <div class="competence-row"><div class="competence-label">Construire un plan de développement intégrant l'IA</div><div class="niveau-btns" data-id="c4"><button class="niveau-btn" onclick="setNiveau('c4','na',this)">❌ Non acquis</button><button class="niveau-btn" onclick="setNiveau('c4','pa',this)">🔶 Partiel</button><button class="niveau-btn" onclick="setNiveau('c4','ac',this)">✅ Acquis</button><button class="niveau-btn" onclick="setNiveau('c4','ma',this)">⭐ Maîtrisé</button></div></div>
+      <div class="competence-row"><div class="competence-label">Conduire le changement lors de l'adoption d'un outil IA RH</div><div class="niveau-btns" data-id="c5"><button class="niveau-btn" onclick="setNiveau('c5','na',this)">❌ Non acquis</button><button class="niveau-btn" onclick="setNiveau('c5','pa',this)">🔶 Partiel</button><button class="niveau-btn" onclick="setNiveau('c5','ac',this)">✅ Acquis</button><button class="niveau-btn" onclick="setNiveau('c5','ma',this)">⭐ Maîtrisé</button></div></div>
+    </div>
+    <div class="bloc-section">
+      <div class="bloc-title">BC03 — Supervision de la gestion administrative</div>
+      <div class="bloc-subtitle">Conformité juridique, RGPD, digitalisation des processus RH</div>
+      <div class="competence-row"><div class="competence-label">Appliquer le RGPD dans le cadre d'un projet IA RH</div><div class="niveau-btns" data-id="c6"><button class="niveau-btn" onclick="setNiveau('c6','na',this)">❌ Non acquis</button><button class="niveau-btn" onclick="setNiveau('c6','pa',this)">🔶 Partiel</button><button class="niveau-btn" onclick="setNiveau('c6','ac',this)">✅ Acquis</button><button class="niveau-btn" onclick="setNiveau('c6','ma',this)">⭐ Maîtrisé</button></div></div>
+      <div class="competence-row"><div class="competence-label">Mettre en œuvre les obligations de l'AI Act européen</div><div class="niveau-btns" data-id="c7"><button class="niveau-btn" onclick="setNiveau('c7','na',this)">❌ Non acquis</button><button class="niveau-btn" onclick="setNiveau('c7','pa',this)">🔶 Partiel</button><button class="niveau-btn" onclick="setNiveau('c7','ac',this)">✅ Acquis</button><button class="niveau-btn" onclick="setNiveau('c7','ma',this)">⭐ Maîtrisé</button></div></div>
+    </div>
+    <div class="bloc-section">
+      <div class="bloc-title">BC04 — Promotion de l'engagement social et sociétal</div>
+      <div class="bloc-subtitle">Éthique, dialogue social, RSE et communication RH</div>
+      <div class="competence-row"><div class="competence-label">Identifier et prévenir les biais algorithmiques</div><div class="niveau-btns" data-id="c8"><button class="niveau-btn" onclick="setNiveau('c8','na',this)">❌ Non acquis</button><button class="niveau-btn" onclick="setNiveau('c8','pa',this)">🔶 Partiel</button><button class="niveau-btn" onclick="setNiveau('c8','ac',this)">✅ Acquis</button><button class="niveau-btn" onclick="setNiveau('c8','ma',this)">⭐ Maîtrisé</button></div></div>
+      <div class="competence-row"><div class="competence-label">Adopter une posture éthique face aux outils d'IA en RH</div><div class="niveau-btns" data-id="c9"><button class="niveau-btn" onclick="setNiveau('c9','na',this)">❌ Non acquis</button><button class="niveau-btn" onclick="setNiveau('c9','pa',this)">🔶 Partiel</button><button class="niveau-btn" onclick="setNiveau('c9','ac',this)">✅ Acquis</button><button class="niveau-btn" onclick="setNiveau('c9','ma',this)">⭐ Maîtrisé</button></div></div>
+      <div class="competence-row"><div class="competence-label">Utiliser l'IA générative pour la communication RH</div><div class="niveau-btns" data-id="c10"><button class="niveau-btn" onclick="setNiveau('c10','na',this)">❌ Non acquis</button><button class="niveau-btn" onclick="setNiveau('c10','pa',this)">🔶 Partiel</button><button class="niveau-btn" onclick="setNiveau('c10','ac',this)">✅ Acquis</button><button class="niveau-btn" onclick="setNiveau('c10','ma',this)">⭐ Maîtrisé</button></div></div>
+    </div>
+    <div style="background:white;border-radius:16px;padding:28px;box-shadow:var(--shadow);display:flex;align-items:center;justify-content:space-between">
+      <div><strong id="ae-count" style="font-size:22px;font-family:'Syne',sans-serif;color:var(--navy)">0/10</strong><span style="font-size:14px;color:var(--text-muted)"> compétences évaluées</span></div>
+      <div style="display:flex;gap:12px;align-items:center">
+        <p id="ae-warn" style="font-size:13px;color:var(--danger);display:none">⚠️ Veuillez évaluer toutes les compétences</p>
+        <button class="btn-primary" style="width:auto;padding:12px 32px" onclick="submitAutoeval()">Valider mon auto-évaluation →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
